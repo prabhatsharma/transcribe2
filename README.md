@@ -1,5 +1,7 @@
 # transcribe2
 
+A sample demo for Amazon Transcribe + Cognito Auth using VueJS
+
 ## Project setup
 ```
 npm install
