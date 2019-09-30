@@ -1,17 +1,51 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <amplify-sign-out v-if='signed'></amplify-sign-out>
+    <div id="nav" v-if='signed'>
+      <router-link to="/">Home</router-link> |
+      <router-link to="/demo">Demo</router-link>
+    </div>
+    <router-view/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import { components, AmplifyEventBus } from 'aws-amplify-vue'
+import { Auth } from "aws-amplify";
+
 
 export default {
-  name: 'app',
+  name: 'App',
   components: {
-    HelloWorld
+    ...components
+  },
+  data: function () {
+    return {
+      status: 'good',
+      signed: false,
+    }
+  },
+  created() {
+    AmplifyEventBus.$on("authState", info => {
+      if (info === "signedIn") {
+        this.signed = true
+        console.log("Just signed in")
+        this.$router.push("/")
+      } else if (info === "signedOut") {
+        console.log('Signedout')
+        this.$router.push({
+          name: "Login"
+        });
+        this.signed = false
+      }
+    });
+  },
+  updated() {
+    Auth.currentAuthenticatedUser().then(user => {
+        this.signed = true;
+      }).catch(error=>{
+        console.log(error);
+      })
   }
 }
 </script>
