@@ -1,25 +1,35 @@
 <template>
   <div class="about">
-    <form> 
-      <input class="form-control" type="file" accept=".mp3,.mp4,.wav,.flac" @change="handleFileChange" />
-      <br>
+    <form>
+      <input
+        class="form-control"
+        type="file"
+        accept=".mp3, .mp4, .wav, .flac"
+        @change="handleFileChange"
+      />
+      <br />
       Language: {{language}}
       <select v-model="language">
         <option value="en-IN">English</option>
         <option value="hi-IN">Hindi</option>
       </select>
-      <br>
-      <button @click.prevent="startTranscribe">Start transcription</button>
+      <br />
 
-      <br><button @click.prevent="checkJobStatus">Check Job status</button>
-      <br> Job Status: {{jobStatus}}
+      <div v-if='uploadComplete'>
+        <button @click.prevent="startTranscribe">Start transcription</button>
+      </div>
+      
 
-      <br>Transcript<br> <p clas="transcript"> {{transcript}} </p>
+      <br />
+      <!-- <button @click.prevent="checkJobStatus">Check Job status</button> -->
+      <br />
 
+      <!-- Job Status: {{jobStatus}} -->
+      <!-- <br />Transcript -->
+      <br />
+      <!-- <p clas="transcript">{{transcript}}</p> -->
     </form>
 
-    
-    
     <br />
     <br />
     <div class="myProgress">
@@ -51,7 +61,8 @@ export default {
       language: "",
       jobName: "",
       jobStatus: "",
-      transcript: ""
+      transcript: "",
+      uploadComplete: false
     };
   },
   methods: {
@@ -63,7 +74,7 @@ export default {
 
       var file = event.target.files[0];
       var fileName = event.target.files[0].name;
-      vm.fileName = fileName
+      vm.fileName = fileName;
 
       Auth.currentCredentials().then(function(creds) {
         AWS.config.credentials = Auth.essentialCredentials(creds);
@@ -95,54 +106,34 @@ export default {
         });
 
         var promise = upload.promise();
-        promise.then(res => {
-          console.log(res);
-          vm.uploadedFileLocation = res.Location
-        }).catch(err=>{
-          console.log(err);
-        })
+        promise
+          .then(res => {
+            console.log(res);
+            vm.uploadedFileLocation = res.Location;
+            vm.uploadComplete = true;
+          })
+          .catch(err => {
+            console.log(err);
+          });
       });
     },
     startTranscribe: function() {
-      var fileName = this.fileName
-      var format = fileName.substring(fileName.length - 3, fileName.length)
-      var jobName = fileName + "-" + Math.round(Math.random()*1000000000000)
-      this.jobName = jobName
+      var vm = this;
+      var fileName = this.fileName;
+      var format = fileName.substring(fileName.length - 3, fileName.length);
+      var jobName = fileName + "-" + Math.round(Math.random() * 1000000000000);
+      this.jobName = jobName;
       var params = {
-          "TranscriptionJobName": jobName,
-          "LanguageCode": this.language,
-          "MediaSampleRateHertz": 44100,
-          "MediaFormat": format,
-          "Media": {
-              "MediaFileUri": this.uploadedFileLocation 
-          }
-      }
-
-      console.log(params)
-
-      Auth.currentCredentials().then(function(creds) {
-        AWS.config.credentials = Auth.essentialCredentials(creds);
-
-        var transcribeservice = new TranscribeService({
-          credentials: Auth.essentialCredentials(creds),
-          region: "us-west-2"
-        })
-
-        transcribeservice.startTranscriptionJob(params, function(err, data){
-        if(err) { console.log(err)}
-        else { 
-          console.log(data)
+        TranscriptionJobName: jobName,
+        LanguageCode: this.language,
+        MediaSampleRateHertz: 44100,
+        MediaFormat: format,
+        Media: {
+          MediaFileUri: this.uploadedFileLocation
         }
-      })
+      };
 
-      })
-
-      
-    },
-    checkJobStatus: async function(){
-      var vm = this
-
-      var jobName = this.jobName
+      console.log(params);
 
       Auth.currentCredentials().then(function(creds) {
         AWS.config.credentials = Auth.essentialCredentials(creds);
@@ -150,45 +141,65 @@ export default {
         var transcribeservice = new TranscribeService({
           credentials: Auth.essentialCredentials(creds),
           region: "us-west-2"
-        })
+        });
+
+        transcribeservice.startTranscriptionJob(params, function(err, data) {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log(data);
+            vm.$router.push("/status")
+          }
+        });
+      });
+    },
+    checkJobStatus: async function() {
+      var vm = this;
+
+      var jobName = this.jobName;
+
+      Auth.currentCredentials().then(function(creds) {
+        AWS.config.credentials = Auth.essentialCredentials(creds);
+
+        var transcribeservice = new TranscribeService({
+          credentials: Auth.essentialCredentials(creds),
+          region: "us-west-2"
+        });
 
         var params = {
           TranscriptionJobName: jobName /* required */
         };
         transcribeservice.getTranscriptionJob(params, function(err, data) {
-          if (err) console.log(err, err.stack); // an error occurred
-          else  { 
-            console.log(data);           // successful response
-            vm.jobStatus = data.TranscriptionJob.TranscriptionJobStatus
+          if (err) console.log(err, err.stack);
+          // an error occurred
+          else {
+            console.log(data); // successful response
+            vm.jobStatus = data.TranscriptionJob.TranscriptionJobStatus;
 
-            if(vm.jobStatus === "COMPLETED") {
-              var TranscriptFileUri = data.TranscriptionJob.Transcript.TranscriptFileUri
+            if (vm.jobStatus === "COMPLETED") {
+              var TranscriptFileUri =
+                data.TranscriptionJob.Transcript.TranscriptFileUri;
 
               fetch(TranscriptFileUri).then(function(response) {
                 if (response.status !== 200) {
-                  console.log('Looks like there was a problem. Status Code: ' +
-                    response.status);
+                  console.log(
+                    "Looks like there was a problem. Status Code: " +
+                      response.status
+                  );
                   return;
                 }
 
                 // Examine the text in the response
                 response.json().then(function(data) {
                   console.log(data);
-                  vm.transcript = data
+                  vm.transcript = data;
                 });
-              })
-
+              });
             }
-
-          }    
+          }
         });
-
-      })
-
-      
-
+      });
     }
-
   }
 };
 </script>

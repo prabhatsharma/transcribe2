@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Login from './views/Login.vue'
+import Status from './views/Status.vue'
+import Transcription from './views/Transcription.vue'
 
 import { Auth } from "aws-amplify";
 
@@ -17,6 +19,8 @@ var router =  new Router({
       component: () => import(/* webpackChunkName: "demo" */ './views/Demo.vue')
     },
     { path: '/login', name: 'login', component: Login },
+    { path: '/status', name: 'status', component: Status },
+    { path: '/transcription/:jobId', name: 'transcription', component: Transcription },
   ]
 })
 
