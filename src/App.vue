@@ -3,7 +3,7 @@
     <amplify-sign-out v-if='signed'></amplify-sign-out>
     <div id="nav" v-if='signed'>
       <router-link to="/">Home</router-link> |
-      <router-link to="/demo">Demo</router-link>|
+      <router-link to="/demo">Demo</router-link> |
       <router-link to="/status">Status</router-link>
     </div>
     <router-view/>
