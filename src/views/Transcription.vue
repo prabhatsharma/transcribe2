@@ -39,7 +39,7 @@ export default {
       sentiment: {
         SentimentScore: {}
       },
-      sentimentError: false,
+      sentimentError: true,
       sentimentErrorText: ""
     }
     
@@ -74,6 +74,7 @@ export default {
             console.log(vm.sentimentErrorText); // an error occurred
           } 
           else {
+            vm.sentimentError = false
             console.log(data);           // successful response
             vm.sentiment = data
           }    
