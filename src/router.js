@@ -4,6 +4,7 @@ import Home from './views/Home.vue'
 import Login from './views/Login.vue'
 import Status from './views/Status.vue'
 import Transcription from './views/Transcription.vue'
+import Dashboard from './views/Dashboard.vue'
 
 import { Auth } from "aws-amplify";
 
@@ -20,6 +21,7 @@ var router =  new Router({
     },
     { path: '/login', name: 'login', component: Login },
     { path: '/status', name: 'status', component: Status },
+    { path: '/dashboard', name: 'dashboard', component: Dashboard },
     { path: '/transcription/:jobId', name: 'transcription', component: Transcription },
   ]
 })
@@ -29,7 +31,7 @@ router.beforeEach((to, from, next) => {
   // to prevent infinite loop of login redirection
   if(to.path === '/login')  next()
 
-  Auth.currentAuthenticatedUser().then((user) => {
+  Auth.currentAuthenticatedUser().then(() => {
     if(to.path === '/login') {
       next('/')
     } else {

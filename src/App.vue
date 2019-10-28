@@ -4,7 +4,8 @@
     <div id="nav" v-if='signed'>
       <router-link to="/">Home</router-link> |
       <router-link to="/demo">Demo</router-link> |
-      <router-link to="/status">Status</router-link>
+      <router-link to="/status">Status</router-link> | 
+      <router-link to="/dashboard">Dashboard</router-link>
     </div>
     <router-view/>
   </div>
@@ -30,10 +31,10 @@ export default {
     AmplifyEventBus.$on("authState", info => {
       if (info === "signedIn") {
         this.signed = true
-        console.log("Just signed in")
+        // console.log("Just signed in")
         this.$router.push("/")
       } else if (info === "signedOut") {
-        console.log('Signedout')
+        // console.log('Signedout')
         this.$router.push({
           name: "Login"
         });
@@ -45,7 +46,7 @@ export default {
     Auth.currentAuthenticatedUser().then(user => {
         this.signed = true;
       }).catch(error=>{
-        console.log(error);
+        // console.log(error);
       })
   }
 }

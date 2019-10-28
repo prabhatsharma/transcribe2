@@ -7,6 +7,8 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
+import './fa.config'
+
 import Amplify, * as AmplifyModules from 'aws-amplify'
 import { AmplifyPlugin } from 'aws-amplify-vue'
 import awsconfig from './aws-exports'
