@@ -1,6 +1,6 @@
 # transcribe2
 
-A sample demo for Amazon Transcribe + Cognito Auth using VueJS
+A sample demo for Amazon Transcribe + Comprehend + Cognito Auth using VueJS
 
 ## Project setup
 ```
