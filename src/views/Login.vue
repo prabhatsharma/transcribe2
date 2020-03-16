@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { components, AmplifyEventBus } from "aws-amplify-vue";
+// import { AmplifyEventBus } from "aws-amplify-vue";
 import { Auth } from "aws-amplify";
 
 export default {
@@ -40,8 +40,9 @@ export default {
       try {
         var userObject = await Auth.currentAuthenticatedUser();
         this.$store.state.signedIn = true;
+        this.$store.state.userObject = userObject;
       } catch (error) {
-        console.log(error);
+        this.$store.state.error = error
       }
     }
   }
