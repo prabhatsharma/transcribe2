@@ -45,8 +45,9 @@ export default {
   updated() {
     Auth.currentAuthenticatedUser().then(user => {
         this.signed = true;
+        console.log(user)
       }).catch(error=>{
-        // console.log(error);
+        console.log(error);
       })
   }
 }

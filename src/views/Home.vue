@@ -2,7 +2,7 @@
   <div class="home">
     <h1> Transcription demo</h1>
     <p>
-      This demo is for presentation only. In production environments this will be automated.
+      This is a simple demo for transcribe and comprehend.
     </p>
   </div>
 </template>

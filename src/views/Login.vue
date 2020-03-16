@@ -1,6 +1,8 @@
 <template>
   <div align="center" valign="middle">
 
+    uid/pwd: test/Complexpass#9876
+
     <!-- <button @click="federatedSignIn" >Federated Login</button> -->
       <amplify-authenticator></amplify-authenticator>
       <!-- <amplify-sign-in></amplify-sign-in> -->
