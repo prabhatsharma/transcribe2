@@ -14,7 +14,7 @@
     "@fortawesome/vue-fontawesome": "^0.1.9",
     "aws-amplify": "^2.2.6",
     "aws-amplify-vue": "^1.1.4",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "core-js": "^2.6.5",
     "moment": "^2.24.0",
     "vue": "^2.6.11",
